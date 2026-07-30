@@ -17,6 +17,8 @@ services:
       PORT: "3000"
       DB_PATH: /app/data/app.db
       TZ: ${TZ:-Asia/Ho_Chi_Minh}
+      ACCESS_PASSWORD: ${ACCESS_PASSWORD:-Derichs2026}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
     volumes:
       - tracking-task-data:/app/data
     # node:20-bookworm-slim has no curl/wget; Node 20's global fetch probes /api/health.

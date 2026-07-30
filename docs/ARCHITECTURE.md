@@ -131,6 +131,8 @@ the server `.env` (see `.env.production.example`).
 |----------|---------|---------|
 | `TASK_PORT` | `3100` | Host port for localhost health probes |
 | `TZ` | `Asia/Ho_Chi_Minh` | Container timezone |
+| `ACCESS_PASSWORD` | `Derichs2026` | Password for the site login gate (`/login`) |
+| `COOKIE_SECURE` | `false` | Set `true` if the public URL is HTTPS-only |
 | `HEALTH_WAIT_TIMEOUT` | `180` | Seconds for `up --wait` (env for `deploy.sh`) |
 
 `TASK_IMAGE` / `TASK_IMAGE_REPO` / `IMAGE_TAG` are set by CI/`deploy.sh`, not by hand.
