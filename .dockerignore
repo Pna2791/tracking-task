@@ -3,4 +3,13 @@
 backend/data
 backend/public
 .git
+.github
+.claude
+docs
 *.md
+.env
+.env.*
+!.env.production.example
+docker-compose.yml
+docker-compose.prod.yml
+deploy.sh

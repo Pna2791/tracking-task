@@ -5,6 +5,9 @@ backend/data/
 *.log
 .DS_Store
 .claude/
+.env
+.env.*
+!.env.production.example
 
 # SQLite runtime sidecars (keep data/app.db + data/export.json tracked)
 data/*.db-wal

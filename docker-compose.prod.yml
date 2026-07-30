@@ -1,0 +1,53 @@
+# Production deployment — used ONLY on the production machine (copied there by CI).
+#
+# Rules enforced by this file + deploy.sh:
+#   - Zero build on production: the service references a prebuilt GHCR image, no `build:`.
+#   - Image is pinned by tag: TASK_IMAGE is exported by deploy.sh as
+#     ghcr.io/<owner>/tracking-task:sha-<commit> (never `latest`).
+#   - `.env` in the deploy directory provides optional runtime configuration
+#     (Compose reads it automatically). CI never creates or overwrites it.
+#   - The named volume (tracking-task-data) is preserved: deploys only `pull` + `up -d`.
+
+services:
+  tracking-task:
+    image: ${TASK_IMAGE:?TASK_IMAGE must be set, e.g. ghcr.io/<owner>/tracking-task:sha-abc123}
+    ports:
+      - "${TASK_PORT:-3100}:3000"
+    environment:
+      PORT: "3000"
+      DB_PATH: /app/data/app.db
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+    volumes:
+      - tracking-task-data:/app/data
+    # node:20-bookworm-slim has no curl/wget; Node 20's global fetch probes /api/health.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - default
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.task.rule=Host(`task.na-3d.shop`)
+      - traefik.http.routers.task.entrypoints=web
+      - traefik.http.routers.task.middlewares=secure-headers@file,compress@file
+      - traefik.http.services.task.loadbalancer.server.port=3000
+      - traefik.docker.network=proxy
+
+networks:
+  # Shared reverse-proxy network owned by the infra stack (~/na-3d-prod/infra).
+  proxy:
+    external: true
+
+volumes:
+  tracking-task-data:
