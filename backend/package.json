@@ -1,0 +1,16 @@
+{
+  "name": "tracking-task-backend",
+  "version": "1.0.0",
+  "description": "REST API for the mind-map task manager",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

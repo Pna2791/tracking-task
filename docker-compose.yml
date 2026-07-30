@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3100:3100"
+    volumes:
+      # Bind-mount repo data/ so the SQLite DB is versioned with the project.
+      - ./data:/app/data
+    environment:
+      - PORT=3100
+      - DB_PATH=/app/data/app.db
+    restart: unless-stopped

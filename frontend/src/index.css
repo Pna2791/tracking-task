@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Smooth layout shifts after reparent / tidy. Disabled while actively dragging. */
+.react-flow__node {
+  transition: transform 0.28s ease;
+}
+.react-flow__node.dragging {
+  transition: none;
+  opacity: 0.55;
+  z-index: 1000 !important;
+}

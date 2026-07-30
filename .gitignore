@@ -1,0 +1,12 @@
+node_modules/
+dist/
+backend/public/
+backend/data/
+*.log
+.DS_Store
+.claude/
+
+# SQLite runtime sidecars (keep data/app.db + data/export.json tracked)
+data/*.db-wal
+data/*.db-shm
+data/*.db-journal
