@@ -1,4 +1,5 @@
 import dagre from '@dagrejs/dagre';
+import { compareByDeadline } from './tree';
 
 // ===========================================================================
 // AUTO TREE LAYOUT
@@ -12,6 +13,8 @@ import dagre from '@dagrejs/dagre';
 // the same depth (which includes all siblings of a parent) get the SAME X
 // coordinate — giving the aligned left edges the spec requires — and are
 // evenly spaced vertically by `nodesep`.
+//
+// Sibling vertical order follows deadline (earliest first); see compareByDeadline.
 // ===========================================================================
 
 // Fixed node dimensions — every node is the same size regardless of title.
@@ -37,11 +40,19 @@ export function computeLayout(visibleTasks) {
   for (const t of visibleTasks) {
     g.setNode(String(t.id), { width: NODE_WIDTH, height: NODE_HEIGHT });
   }
+
+  // Add parent→child edges in deadline order so dagre stacks siblings earliest-first.
+  const byParent = new Map();
   for (const t of visibleTasks) {
-    // Only draw an edge if the parent is also visible (it always is, since a
-    // child can only be visible when its whole ancestor chain is expanded).
     if (t.parentId != null && visibleIds.has(t.parentId)) {
-      g.setEdge(String(t.parentId), String(t.id));
+      if (!byParent.has(t.parentId)) byParent.set(t.parentId, []);
+      byParent.get(t.parentId).push(t);
+    }
+  }
+  for (const [parentId, children] of byParent) {
+    children.sort(compareByDeadline);
+    for (const t of children) {
+      g.setEdge(String(parentId), String(t.id));
     }
   }
 

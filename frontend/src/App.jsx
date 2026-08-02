@@ -113,12 +113,11 @@ export default function App() {
     [tasks, hiddenIds]
   );
 
-  // A signature of the VISIBLE tree structure. Layout is only recomputed when
-  // this changes (add/delete/collapse/expand), not on every color re-tick.
+  // Layout signature: structure + deadline order (siblings sort by deadline).
   const structureSig = useMemo(
     () =>
       visibleTasks
-        .map((t) => `${t.id}:${t.parentId}`)
+        .map((t) => `${t.id}:${t.parentId}:${t.deadline || ''}`)
         .sort()
         .join('|'),
     [visibleTasks]

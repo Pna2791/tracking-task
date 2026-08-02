@@ -1,6 +1,20 @@
 // Helpers for working with the flat task list as a tree.
 
-// Build a Map of parentId -> array of child tasks.
+/**
+ * Sibling order: earliest deadline first, tasks with no deadline last,
+ * then stable by id.
+ */
+export function compareByDeadline(a, b) {
+  if (!a.deadline && !b.deadline) return a.id - b.id;
+  if (!a.deadline) return 1;
+  if (!b.deadline) return -1;
+  const da = new Date(a.deadline).getTime();
+  const db = new Date(b.deadline).getTime();
+  if (da !== db) return da - db;
+  return a.id - b.id;
+}
+
+// Build a Map of parentId -> array of child tasks (sorted by deadline).
 export function buildChildrenMap(tasks) {
   const childrenOf = new Map();
   for (const t of tasks) {
@@ -8,6 +22,9 @@ export function buildChildrenMap(tasks) {
       if (!childrenOf.has(t.parentId)) childrenOf.set(t.parentId, []);
       childrenOf.get(t.parentId).push(t);
     }
+  }
+  for (const children of childrenOf.values()) {
+    children.sort(compareByDeadline);
   }
   return childrenOf;
 }
